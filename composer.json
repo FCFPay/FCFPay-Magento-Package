@@ -1,0 +1,44 @@
+{
+  "name": "FCFPay/fcfpay-magento-package",
+  "description": "FCF Pay Magento 2 payment gateway",
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "authors": [
+      {
+          "name": "fcfpay",
+          "email": "info@frenchconnection.finance",
+          "homepage": "https://fcfpay.com/"
+      }
+  ],
+  "keywords": [
+      "fcfpay",
+      "magento2_module",
+      "magento2_payment_module",
+      "payment_gateway",
+      "magento2_payment_gateway",
+      "payment_processing",
+      "magento2_payment_processing",
+      "e-commerce",
+      "Crypto",
+      "mastercard",
+      "Payments"
+
+  ],
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0",
+    "magento/module-sales": "*",
+    "magento/module-quote": "*",
+    "magento/module-checkout": "*",
+    "magento/module-payment": "*"
+  },
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "fcfpay\\PaymentGateway\\": ""
+    }
+  }
+}

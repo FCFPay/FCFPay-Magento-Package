@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+* Copyright (C) 2021 FCFPAY
+ *
+ * FCF Pay provides merchants with an easy-to-use solution to accept cryptocurrency payments. Stay ahead of the competition with FCF Pay.
+ * FCF Pay is a safe and secure payment processing solution. FCF Pay is housed on a dedicated server which uses innovative encrypting technology to ensure that all of your information remains secure and private.
+ * @author      The FCF Inc
+ * @copyright   2021 The FCF Inc
+ * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <fcfpay_checkout>
+                <model>fcfpay\PaymentGateway\Model\Method\Checkout</model>
+                <title>FCF Pay Checkout</title>
+                <active>0</active>
+                <order_status>payment_review</order_status>
+                <transaction_type>payment</transaction_type>
+                <shop_id>361</shop_id>
+                <shop_key>b8647b68898b084b836474ed8d61ffe117c9a01168d867f24953b776ddcb134d</shop_key>
+                <domain_checkout>fcfpay.com</domain_checkout>
+                <domain_gateway>https://sandbox.fcfpay.com/api/v1</domain_gateway>
+                <card>1</card>
+                <card_halva>0</card_halva>
+                <erip>0</erip>
+                <erip_service_no>99999999</erip_service_no>
+                <min_order_total>0.01</min_order_total>
+                <debug>0</debug>
+                <test_mode>1</test_mode>
+                <allowspecific>0</allowspecific>
+                <allow_specific_currency>0</allow_specific_currency>
+                <group>fcfpay</group>
+            </fcfpay_checkout>
+        </payment>
+    </default>
+</config>
