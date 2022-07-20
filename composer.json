@@ -1,5 +1,5 @@
 {
-  "name": "FCFPay/fcfpay-magento-package",
+  "name": "fcfpay/fcfpay-magento-package",
   "description": "FCF Pay Magento 2 payment gateway",
   "type": "magento2-module",
   "version": "1.0.0",
