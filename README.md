@@ -27,7 +27,7 @@ Furthermore, when you make a purchase through FCF Pay, your purchase history wil
 # Installation 
 
 ``` 
-   composer require FCFPay/fcfpay-magento-package dev-master
+   composer require fcfpay/fcfpay-magento-package dev-master
 ```
 ``` 
    php bin/magento setup:upgrade
