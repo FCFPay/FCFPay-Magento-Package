@@ -478,7 +478,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 
             }');
         $this->curl->addHeader("Content-Type", "application/json");
-        $this->curl->post('https://'.$this->getConfigHelper()->getModeVarchar().'.fcfpay.com/api/v1/create-order');
+        $this->curl->post('https://'.$this->getConfigHelper()->getModeVarchar().'.fcfpay.com/api/v2/create-order');
         $response = $this->curl->getBody();
 
         if ($response === false) {
