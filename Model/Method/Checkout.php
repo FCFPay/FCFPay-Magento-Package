@@ -227,8 +227,12 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
         $this->getConfigHelper()->initGatewayClient();
         try {
             $responseObject = $this->createOrder($data);
-            $isSuccessful = true;
-                //$responseObject->isSuccess() && !empty($responseObject->getRedirectUrl());
+            if($responseObject->success){
+                $isSuccessful = true;
+            }
+             $this->getCheckoutSession()->setFcfGatewayLastCheckoutError(
+               json_encode($responseObject)
+            );
             if (!$isSuccessful) {
                 $errorMessage = false;//$responseObject->getMessage();
                 $this->getCheckoutSession()->setFcfGatewayLastCheckoutError(
@@ -236,17 +240,15 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 );
                 $this->getModuleHelper()->throwWebApiException($errorMessage);
             }
-            $payment->setTransactionId($orderId);//$responseObject->getToken()
-            $payment->setIsTransactionPending(true);
-            $payment->setIsTransactionClosed(false);
-//            $this->getModuleHelper()->setPaymentTransactionAdditionalInfo(
-//                $payment,
-//                $responseObject
-//            );
-//          print_r($responseObject);die();
-            $this->getCheckoutSession()->setFcfGatewayCheckoutRedirectUrl(
-                $responseObject->data->checkout_page_url
-            );
+            
+            if ($isSuccessful) {
+                $payment->setTransactionId($orderId);//$responseObject->getToken()
+                $payment->setIsTransactionPending(true);
+                $payment->setIsTransactionClosed(false);
+                $this->getCheckoutSession()->setFcfGatewayCheckoutRedirectUrl(
+                    $responseObject->data->checkout_page_url
+                );
+            }
             $this->_writeDebugData();
             return $this;
         } catch (\Exception $e) {
@@ -456,36 +458,34 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
         $url = $this->_storeManager->getStore($storeId)->getUrl("fcfpay/ipn/index");
         $parse = parse_url($url);
         $domain =  $parse['host'];
-        $this->curl->setOption(CURLOPT_HEADER, 0);
-        $this->curl->setOption(CURLOPT_TIMEOUT, 60);
+        
+        $this->curl->setOption(CURLOPT_FOLLOWLOCATION, true);
+        $this->curl->setOption(CURLOPT_TIMEOUT, 0);
+        $this->curl->setOption(CURLOPT_MAXREDIRS, 10);
+        $this->curl->setOption(CURLOPT_ENCODING, '');
         $this->curl->setOption(CURLOPT_RETURNTRANSFER, true);
         $this->curl->setOption(CURLOPT_HTTP_VERSION , CURL_HTTP_VERSION_1_1);
-        $this->curl->setOption(CURLOPT_POST, 1);
+        $this->curl->setOption(CURLOPT_CUSTOMREQUEST, 'POST');
 
         $this->curl->setOption(CURLOPT_HTTPHEADER , array(
             'Authorization: Bearer '.$this->getConfigHelper()->getShopKey(),
             'Content-Type: application/json'
         ));
-        $this->curl->setOption(CURLOPT_POSTFIELDS, CURLOPT_POSTFIELDS ,'{
-                "domain": "'.$domain.'",
-                "order_id": "'.$data['order']['increment_id'].'",
-                "user_id": "1",
-                "amount": "'.$data['order']['amount'].'",
-                "currency_name": "'.$data['order']['currency'].'",
-                "currency_code": "840",
-                "order_date": "'.date("Y-m-d").'",
-                "redirect_url": "'.$url.'"
-                
-            }');
+        
         $this->curl->addHeader("Content-Type", "application/json");
-        $this->curl->post('https://'.$this->getConfigHelper()->getModeVarchar().'.fcfpay.com/api/v2/create-order');
+        $this->curl->post('https://'.$this->getConfigHelper()->getModeVarchar().'.fcfpay.com/api/v2/create-order',json_encode(["domain"=> "'.$domain.'",
+                "order_id"=> $data['order']['increment_id'],
+                "user_id"=> "1",
+                "amount"=> $data['order']['amount'],
+                "currency_name"=>$data['order']['currency'],
+                "currency_code"=> "840",
+                "order_date"=> date("Y-m-d"),
+                "redirect_url"=> $url]));
         $response = $this->curl->getBody();
+        
+        return json_decode($response);
 
-        if ($response === false) {
-            return false;
-        } else {
-            return json_decode($response);
-        }
+       
 
     }
 
