@@ -90,15 +90,14 @@ class Check
             ->limit(5);
 
         $rows = $db->fetchAll($select);
-        $ordersStr = '[';
+        $orderIds = [];
         foreach ($rows as $row) {
             $order = $this->_order->load($row['entity_id']);
-            $ordersStr.='"'.$order->getIncrementId().'",';
+            array_push($orderIds,$order->getIncrementId());
         }
+       
 
-        $ordersStr = substr_replace($ordersStr, "", -1).']';
-
-        $response = $this->checkStatus($ordersStr);
+        $response = $this->checkStatus($orderIds);
 
         $to_time = strtotime(date("Y-m-d H:i:s"));
 
@@ -218,7 +217,7 @@ class Check
      * @return object
      */
 
-    function checkStatus($orderId){
+    function checkStatus($orderIds){
         $key = \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\App\Config\ScopeConfigInterface::class)
             ->getValue(
@@ -246,11 +245,9 @@ class Check
             'Authorization: Bearer '.$key,
             'Content-Type: application/json'
         ));
-        $this->curl->setOption(CURLOPT_POSTFIELDS, '{
-                      "order_ids": '.$orderId.'
-                }');
+      
         $this->curl->addHeader("Content-Type", "application/json");
-        $this->curl->post('https://'.$modeVarchar.'.fcfpay.com/api/v2/check-orders',[]);
+        $this->curl->post('https://'.$modeVarchar.'.fcfpay.com/api/v2/check-orders',json_encode(["order_ids"=>$orderIds]));
         $response = $this->curl->getBody();
 
         if ($response === false) {
