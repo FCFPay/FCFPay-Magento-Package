@@ -16,22 +16,33 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\Controller\Result\JsonFactory;
+
 
 class Callback extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface
 {
-
     /**
      * @var Curl
      */
     protected $curl;
+    /**
+     * @var Order
+     */
+    protected $_order;
+    /**
+     * @var $resultJsonFactory
+     */
+    protected $resultJsonFactory;    
 
     public function __construct(
         Curl $curl,
         Order $order,
+        JsonFactory $resultJsonFactory,
         \Magento\Framework\App\Action\Context $context)
     {
         $this->curl = $curl;
         $this->_order = $order;
+        $this->resultJsonFactory = $resultJsonFactory;
         return parent::__construct($context);
     }
 
@@ -46,6 +57,10 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
                $to_time = strtotime(date("Y-m-d H:i:s"));
                $order = $this->_order->loadByIncrementId($callback->data->order_id);//$objectManager->create('\Magento\Sales\Model\Order')->loadByIncrementId($value->order_id);
                $from_time =strtotime($order->getCreatedAt());
+               $resultJson = $this->resultJsonFactory->create();
+               if ($order->getState()==Order::STATE_COMPLETE ){
+                   return $resultJson->setData(['success' => 'true','order_status'=>Order::STATE_COMPLETE]);
+               }
                if (floatval($callback->data->total_fiat_amount)>0) {
                    $fiat_amount = floatval($callback->data->total_fiat_amount);
                    $def = $this->getDiff(floatval($order->getGrandTotal()), floatval($callback->data->total_fiat_amount));
@@ -55,8 +70,10 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
                        $order->setBaseTotalPaid($fiat_amount);
                        $order->setState($orderState)->setStatus($orderState);
                        $order->save();
-                   } else {
-                       /* reset total_paid & base_total_paid of order */
+                       if ($order->getState()==Order::STATE_COMPLETE ){
+                           return $resultJson->setData(['success' => 'true','order_status'=>Order::STATE_COMPLETE]);
+                       }
+                   } else {                      
                        if (round(abs($to_time - $from_time) / 60, 2) > 125 && $order->getBaseTotalPaid() != 0) {
                            $orderState = Order::STATE_HOLDED;
                            $order->setState($orderState)->setStatus($orderState);
@@ -64,21 +81,19 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
                        $order->setTotalPaid($fiat_amount);
                        $order->setBaseTotalPaid($fiat_amount);
                        $order->save();
+                       return $resultJson->setData(['success' => 'true','order_status'=>$order->getState()]);
                    }
                } else {
                    if ((intval(round(abs($to_time - $from_time) / 60, 2)) > 125) && (floatval($order->getBaseTotalPaid()) == 0)) {
                        $orderState = Order::STATE_CANCELED;
                        $order->setState($orderState)->setStatus($orderState);
                        $order->save();
+                       return $resultJson->setData(['success' => 'true','order_status'=>Order::STATE_CANCELED]);
                    }
-
                }
            }
-
-
         }
     }
-
     /**
      * check payment differences
      *
@@ -86,7 +101,6 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
      * @param float $fiat_amount
      * @return boolean
      */
-
     public function getDiff($amount,$fiat_amount)
     {
         $percent_order_def = \Magento\Framework\App\ObjectManager::getInstance()
@@ -119,9 +133,7 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
      * @param integer $orderId
      * @return json
      */
-
-
-    function checkStatus($orderId){
+    protected function checkStatus($orderId){
         $key = \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\App\Config\ScopeConfigInterface::class)
             ->getValue(
@@ -161,7 +173,6 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
         }
 
     }
-
     /**
      * @return \Magento\Framework\Controller\ResultInterface|\Magento\Framework\Controller\Result\Json
      */
@@ -173,7 +184,6 @@ class Callback extends \Magento\Framework\App\Action\Action implements CsrfAware
     {
         return null;
     }
-
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         return true;
