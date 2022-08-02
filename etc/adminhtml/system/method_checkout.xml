@@ -54,6 +54,7 @@
         </field>
         <field id="erip_service_no" translate="label comment" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Percent amount differences </label>
+            <comment>Leave empty to disable differences limit</comment>
             <validate>validate-alphanum</validate>
             <config_path>payment/fcfpay_checkout/percent_order_def</config_path>
             <can_be_empty>0</can_be_empty>
@@ -63,6 +64,7 @@
         </field>
         <field id="min_order_def" translate="label comment" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Maximum amount differences</label>
+            <comment>Leave empty to disable differences limit</comment>
             <validate>validate-alphanum</validate>
             <config_path>payment/fcfpay_checkout/min_order_def</config_path>
             <can_be_empty>0</can_be_empty>
