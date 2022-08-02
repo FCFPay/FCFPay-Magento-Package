@@ -223,24 +223,6 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
     }
 
     /**
-     * Get Method Domain Gateway Admin Setting
-     * @return null|string
-     */
-    public function getDomainGateway()
-    {
-        return $this->getValue('domain_gateway');
-    }
-
-    /**
-     * Get Method Domain Checkout Admin Setting
-     * @return null|string
-     */
-    public function getDomainCheckout()
-    {
-        return $this->getValue('domain_checkout');
-    }
-
-    /**
      * Get Method Checkout Page Title
      * @return null|string
      */
