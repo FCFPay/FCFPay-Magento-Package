@@ -30,21 +30,7 @@
             <depends>
                 <field id="active">1</field>
             </depends>
-        </field>
-<!--        <field id="display_logo_title" translate="label" type="select" sortOrder="16" showInDefault="1" showInWebsite="1" showInStore="1">-->
-<!--            <label>Display Title next to Logo</label>-->
-<!--            <config_path>payment/fcfpay_checkout/display_logo</config_path>-->
-<!--            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
-<!--        </field>-->
-        <field id="shop_id" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>Shop Id</label>
-            <config_path>payment/fcfpay_checkout/shop_id</config_path>
-            <validate>required-entry validate-alphanum</validate>
-            <can_be_empty>0</can_be_empty>
-            <depends>
-                <field id="active">1</field>
-            </depends>
-        </field>
+        </field>        
         <field id="shop_key" translate="label" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>API Key</label>
             <config_path>payment/fcfpay_checkout/shop_key</config_path>
@@ -68,6 +54,7 @@
         </field>
         <field id="erip_service_no" translate="label comment" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Percent amount differences </label>
+            <comment>Leave empty to disable differences limit</comment>
             <validate>validate-alphanum</validate>
             <config_path>payment/fcfpay_checkout/percent_order_def</config_path>
             <can_be_empty>0</can_be_empty>
@@ -76,7 +63,8 @@
             </depends>
         </field>
         <field id="min_order_def" translate="label comment" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>Minimum amount differences</label>
+            <label>Maximum amount differences</label>
+            <comment>Leave empty to disable differences limit</comment>
             <validate>validate-alphanum</validate>
             <config_path>payment/fcfpay_checkout/min_order_def</config_path>
             <can_be_empty>0</can_be_empty>

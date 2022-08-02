@@ -197,18 +197,21 @@ class Check
                 'payment/fcfpay_checkout/min_order_def',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
-        $percent = (floatval($percent_order_def) / 100) * $amount;
+        $percent = 0;
+        if(empty($percent_order_def) && empty($min_order_def)){
+            return true;
+        }
+        if(!empty($percent_order_def)){
+            $percent = (floatval($percent_order_def) / 100) * $amount;
+        } 
 
-        if ($percent > floatval($min_order_def)){
+        if (!empty($min_order_def) && ($percent > floatval($min_order_def))){
             $percent =  floatval($min_order_def);
         }
-
-        if ($amount-$fiat_amount>$percent){
+        if ($percent!=0 && ($amount-$fiat_amount>$percent)){
             return false;
         }
         return true;
-
-
     }
     /**
      * check payment request status

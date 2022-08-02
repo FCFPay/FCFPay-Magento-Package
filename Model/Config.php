@@ -166,8 +166,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
      */
     public function isApiAvailable($methodCode = null)
     {
-        return !empty($this->getShopId()) &&
-               !empty($this->getShopKey()) &&
+        return !empty($this->getShopKey()) &&
                !empty($this->getTransactionTypes());
     }
 
@@ -212,16 +211,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
             ScopeInterface::SCOPE_STORE,
             $this->_storeId
         );
-    }
-
-    /**
-     * Get Method Shop Id Admin Setting
-     * @return null|string
-     */
-    public function getShopId()
-    {
-        return $this->getValue('shop_id');
-    }
+    }   
 
     /**
      * Get Method Shop Key Admin Setting
@@ -230,24 +220,6 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
     public function getShopKey()
     {
         return $this->getValue('shop_key');
-    }
-
-    /**
-     * Get Method Domain Gateway Admin Setting
-     * @return null|string
-     */
-    public function getDomainGateway()
-    {
-        return $this->getValue('domain_gateway');
-    }
-
-    /**
-     * Get Method Domain Checkout Admin Setting
-     * @return null|string
-     */
-    public function getDomainCheckout()
-    {
-        return $this->getValue('domain_checkout');
     }
 
     /**

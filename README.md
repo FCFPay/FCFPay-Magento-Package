@@ -42,4 +42,11 @@ Furthermore, when you make a purchase through FCF Pay, your purchase history wil
    php bin/magento cache:clean
 ```
     
+# Deposit Callback
+In this step, we are sending you a webhook with the status of the payment to your provided URL in the FCF Pay dashboard as a project callback URL. 
+This webhook happens when you receive payment.
 
+Use the below example of URL for Deposit Callback 
+``` 
+  https://yourdomain.com/fcfpay/ipn/callback
+```
