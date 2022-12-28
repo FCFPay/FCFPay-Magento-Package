@@ -61,8 +61,8 @@ class Check
         AbstractResource $resource = null,
         ResourceConnection $resourceCollection,
         Order $order,
-        $runModelPath = '',
-        Curl $curl
+        Curl $curl,
+        $runModelPath = ''        
     ) {
         $this->_runModelPath = $runModelPath;
         $this->_resourceCollection = $resourceCollection;
