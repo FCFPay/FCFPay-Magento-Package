@@ -88,7 +88,6 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
         \fcfpay\PaymentGateway\Helper\Data $moduleHelper,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        Curl $curl,
         array $data = []
     ) {
         parent::__construct(
@@ -108,7 +107,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
         $this->_checkoutSession = $checkoutSession;
         $this->_moduleHelper = $moduleHelper;
         $this->_logger = $logger;
-        $this->curl = $curl;
+        $this->curl = new Curl();
         $this->_configHelper =
             $this->getModuleHelper()->getMethodConfig(
                 $this->getCode()
@@ -225,6 +224,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
             ]
         ];
         $this->getConfigHelper()->initGatewayClient();
+        $isSuccessful = false;
         try {
             $responseObject = $this->createOrder($data);
             if($responseObject->success){
@@ -238,7 +238,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 $this->getCheckoutSession()->setFcfGatewayLastCheckoutError(
                     $errorMessage
                 );
-                $this->getModuleHelper()->throwWebApiException($errorMessage);
+                $this->getModuleHelper()->throwWebApiException(__($errorMessage), 422);
             }
             
             if ($isSuccessful) {
@@ -331,9 +331,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
 
             $this->getMessageManager()->addError($errorMessage);
 
-            $this->getModuleHelper()->throwWebApiException(
-                $errorMessage
-            );
+            $this->getModuleHelper()->throwWebApiException($errorMessage);
         }
 
         try {
