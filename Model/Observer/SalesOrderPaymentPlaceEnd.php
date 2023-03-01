@@ -61,7 +61,8 @@ class SalesOrderPaymentPlaceEnd implements ObserverInterface
             case \fcfpay\PaymentGateway\Model\Method\Checkout::CODE:
                 $this->updateOrderStatusToNew($payment);
                 break;
-            case \fcfpay\PaymentGateway\Model\Method\Direct::CODE:
+//            case \fcfpay\PaymentGateway\Model\Method\Direct::CODE:
+            case 'fcfpay_direct':
                 $this->updateOrderStatus($payment);
                 break;
             default:
